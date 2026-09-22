@@ -20,6 +20,7 @@ const saveVehicleButton = document.getElementById("saveVehicleButton");
 const vehicleList = document.getElementById("vehicleList");
 
 const fuelDate = document.getElementById("fuelDate");
+const odometerInput = document.getElementById("odometer");
 
 let records =
   JSON.parse(localStorage.getItem("fuelRecords")) || [];
@@ -27,117 +28,205 @@ let records =
 let vehicles =
   JSON.parse(localStorage.getItem("vehicles")) || [];
 
-/* ดึงชื่อรถจากประวัติเก่ามารวมด้วย */
+
+/* =========================
+   ดึงรถจากข้อมูลเก่า
+========================= */
+
 records.forEach(record => {
-  if (record.vehicle && !vehicles.includes(record.vehicle)) {
+  if (
+    record.vehicle &&
+    !vehicles.includes(record.vehicle)
+  ) {
     vehicles.push(record.vehicle);
   }
 });
+
 
 if (vehicles.length === 0) {
   vehicles = ["Honda Civic"];
 }
 
+
 let editingVehicle = null;
 
 
 /* =========================
-   ระบบรถ
+   บันทึกข้อมูล
 ========================= */
 
 function saveVehicles() {
+
   localStorage.setItem(
     "vehicles",
     JSON.stringify(vehicles)
   );
+
 }
 
+
 function saveRecords() {
+
   localStorage.setItem(
     "fuelRecords",
     JSON.stringify(records)
   );
+
 }
 
-function renderVehicles(selectedVehicle = null) {
+
+/* =========================
+   แสดงรายการรถ
+========================= */
+
+function renderVehicles(
+  selectedVehicle = null
+) {
 
   const oldSelected =
     selectedVehicle ||
     vehicleSelect.value ||
     vehicles[0];
 
+
   vehicleSelect.innerHTML = "";
   fuelVehicle.innerHTML = "";
 
+
   vehicles.forEach(vehicle => {
 
-    const option1 = document.createElement("option");
+    const option1 =
+      document.createElement("option");
+
     option1.value = vehicle;
     option1.textContent = vehicle;
+
     vehicleSelect.appendChild(option1);
 
-    const option2 = document.createElement("option");
+
+    const option2 =
+      document.createElement("option");
+
     option2.value = vehicle;
     option2.textContent = vehicle;
+
     fuelVehicle.appendChild(option2);
 
   });
 
+
   if (vehicles.includes(oldSelected)) {
-    vehicleSelect.value = oldSelected;
+
+    vehicleSelect.value =
+      oldSelected;
+
+  } else {
+
+    vehicleSelect.value =
+      vehicles[0];
+
   }
 
-  fuelVehicle.value = vehicleSelect.value;
-  currentVehicle.textContent = vehicleSelect.value;
+
+  fuelVehicle.value =
+    vehicleSelect.value;
+
+
+  currentVehicle.textContent =
+    vehicleSelect.value;
+
 
   renderVehicleList();
+
 }
 
 
 /* =========================
-   หน้าจัดการรถ
+   เปิดหน้าจัดการรถ
 ========================= */
 
-addVehicleButton.addEventListener("click", () => {
+addVehicleButton.addEventListener(
+  "click",
+  () => {
 
-  editingVehicle = null;
+    editingVehicle = null;
 
-  vehicleNameInput.value = "";
-  saveVehicleButton.textContent = "เพิ่มรถ";
+    vehicleNameInput.value = "";
 
-  renderVehicleList();
-
-  vehicleModal.classList.add("show");
-
-  setTimeout(() => {
-    vehicleNameInput.focus();
-  }, 100);
-
-});
+    saveVehicleButton.textContent =
+      "เพิ่มรถ";
 
 
-closeVehicleModal.addEventListener("click", () => {
-  vehicleModal.classList.remove("show");
-});
+    renderVehicleList();
+
+
+    vehicleModal.classList.add(
+      "show"
+    );
+
+
+    setTimeout(() => {
+
+      vehicleNameInput.focus();
+
+    }, 100);
+
+  }
+);
+
+
+/* =========================
+   ปิดหน้าจัดการรถ
+========================= */
+
+closeVehicleModal.addEventListener(
+  "click",
+  () => {
+
+    vehicleModal.classList.remove(
+      "show"
+    );
+
+  }
+);
 
 
 document
   .querySelector(".vehicle-backdrop")
-  .addEventListener("click", () => {
-    vehicleModal.classList.remove("show");
-  });
+  .addEventListener(
+    "click",
+    () => {
+
+      vehicleModal.classList.remove(
+        "show"
+      );
+
+    }
+  );
 
 
-saveVehicleButton.addEventListener("click", saveVehicle);
+/* =========================
+   เพิ่ม / แก้ไขรถ
+========================= */
+
+saveVehicleButton.addEventListener(
+  "click",
+  saveVehicle
+);
 
 
-vehicleNameInput.addEventListener("keydown", event => {
+vehicleNameInput.addEventListener(
+  "keydown",
+  event => {
 
-  if (event.key === "Enter") {
-    saveVehicle();
+    if (event.key === "Enter") {
+
+      saveVehicle();
+
+    }
+
   }
-
-});
+);
 
 
 function saveVehicle() {
@@ -145,125 +234,190 @@ function saveVehicle() {
   const newName =
     vehicleNameInput.value.trim();
 
+
   if (!newName) {
+
     alert("กรุณากรอกชื่อรถ");
+
     return;
+
   }
 
 
   /* เพิ่มรถใหม่ */
+
   if (editingVehicle === null) {
 
-    if (vehicles.includes(newName)) {
+    if (
+      vehicles.includes(newName)
+    ) {
+
       alert("มีรถชื่อนี้อยู่แล้ว");
+
       return;
+
     }
+
 
     vehicles.push(newName);
 
+
     saveVehicles();
+
 
     renderVehicles(newName);
 
+
     vehicleNameInput.value = "";
 
-    vehicleModal.classList.remove("show");
+
+    vehicleModal.classList.remove(
+      "show"
+    );
+
 
     updateSummary();
 
+
     return;
+
   }
 
 
   /* แก้ไขชื่อรถ */
+
   if (
     newName !== editingVehicle &&
     vehicles.includes(newName)
   ) {
+
     alert("มีรถชื่อนี้อยู่แล้ว");
+
     return;
+
   }
 
 
   const index =
-    vehicles.indexOf(editingVehicle);
+    vehicles.indexOf(
+      editingVehicle
+    );
+
 
   if (index !== -1) {
-    vehicles[index] = newName;
+
+    vehicles[index] =
+      newName;
+
   }
 
 
-  /* เปลี่ยนชื่อรถในประวัติน้ำมันด้วย */
-  records = records.map(record => {
+  /* เปลี่ยนชื่อในประวัติน้ำมัน */
 
-    if (record.vehicle === editingVehicle) {
-      return {
-        ...record,
-        vehicle: newName
-      };
-    }
+  records =
+    records.map(record => {
 
-    return record;
+      if (
+        record.vehicle ===
+        editingVehicle
+      ) {
 
-  });
+        return {
+          ...record,
+          vehicle: newName
+        };
+
+      }
+
+
+      return record;
+
+    });
 
 
   saveVehicles();
+
   saveRecords();
+
 
   editingVehicle = null;
 
-  saveVehicleButton.textContent = "เพิ่มรถ";
+
+  saveVehicleButton.textContent =
+    "เพิ่มรถ";
+
+
   vehicleNameInput.value = "";
+
 
   renderVehicles(newName);
 
+
   updateSummary();
+
 }
 
 
 /* =========================
-   รายการรถ
+   รายการรถในหน้าจัดการ
 ========================= */
 
 function renderVehicleList() {
 
   vehicleList.innerHTML = "";
 
+
   vehicles.forEach(vehicle => {
 
     const item =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     item.className =
       "vehicle-list-item";
 
 
     const name =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     name.className =
       "vehicle-list-name";
+
 
     name.textContent =
       vehicle;
 
 
     const actions =
-      document.createElement("div");
+      document.createElement(
+        "div"
+      );
+
 
     actions.className =
       "vehicle-list-actions";
 
 
+    /* ปุ่มแก้ไข */
+
     const editButton =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
+
 
     editButton.type =
       "button";
 
+
     editButton.className =
       "vehicle-edit-button";
+
 
     editButton.textContent =
       "แก้ไข";
@@ -273,13 +427,17 @@ function renderVehicleList() {
       "click",
       () => {
 
-        editingVehicle = vehicle;
+        editingVehicle =
+          vehicle;
+
 
         vehicleNameInput.value =
           vehicle;
 
+
         saveVehicleButton.textContent =
           "บันทึกการแก้ไข";
+
 
         vehicleNameInput.focus();
 
@@ -287,14 +445,21 @@ function renderVehicleList() {
     );
 
 
+    /* ปุ่มลบ */
+
     const deleteButton =
-      document.createElement("button");
+      document.createElement(
+        "button"
+      );
+
 
     deleteButton.type =
       "button";
 
+
     deleteButton.className =
       "vehicle-delete-button";
+
 
     deleteButton.textContent =
       "ลบ";
@@ -310,13 +475,24 @@ function renderVehicleList() {
     );
 
 
-    actions.appendChild(editButton);
-    actions.appendChild(deleteButton);
+    actions.appendChild(
+      editButton
+    );
+
+
+    actions.appendChild(
+      deleteButton
+    );
+
 
     item.appendChild(name);
+
     item.appendChild(actions);
 
-    vehicleList.appendChild(item);
+
+    vehicleList.appendChild(
+      item
+    );
 
   });
 
@@ -336,6 +512,7 @@ function deleteVehicle(vehicle) {
     );
 
     return;
+
   }
 
 
@@ -346,13 +523,16 @@ function deleteVehicle(vehicle) {
 
 
   if (!confirmed) {
+
     return;
+
   }
 
 
   vehicles =
     vehicles.filter(
-      item => item !== vehicle
+      item =>
+        item !== vehicle
     );
 
 
@@ -364,18 +544,24 @@ function deleteVehicle(vehicle) {
 
 
   saveVehicles();
+
   saveRecords();
 
 
   editingVehicle = null;
 
+
   vehicleNameInput.value = "";
+
 
   saveVehicleButton.textContent =
     "เพิ่มรถ";
 
 
-  renderVehicles(vehicles[0]);
+  renderVehicles(
+    vehicles[0]
+  );
+
 
   updateSummary();
 
@@ -383,7 +569,7 @@ function deleteVehicle(vehicle) {
 
 
 /* =========================
-   เปลี่ยนรถ
+   เปลี่ยนรถที่เลือก
 ========================= */
 
 vehicleSelect.addEventListener(
@@ -393,8 +579,10 @@ vehicleSelect.addEventListener(
     currentVehicle.textContent =
       vehicleSelect.value;
 
+
     fuelVehicle.value =
       vehicleSelect.value;
+
 
     updateSummary();
 
@@ -403,17 +591,24 @@ vehicleSelect.addEventListener(
 
 
 /* =========================
-   วันที่
+   วันที่วันนี้
 ========================= */
 
-fuelDate.value =
-  new Date()
-    .toISOString()
-    .split("T")[0];
+function setTodayDate() {
+
+  fuelDate.value =
+    new Date()
+      .toISOString()
+      .split("T")[0];
+
+}
+
+
+setTodayDate();
 
 
 /* =========================
-   หน้าต่างเติมน้ำมัน
+   เปิดหน้าต่างเติมน้ำมัน
 ========================= */
 
 openFuelModal.addEventListener(
@@ -423,29 +618,42 @@ openFuelModal.addEventListener(
     fuelVehicle.value =
       vehicleSelect.value;
 
-    fuelModal.classList.add("show");
+
+    fuelModal.classList.add(
+      "show"
+    );
 
   }
 );
 
 
+/* =========================
+   ปิดหน้าต่างเติมน้ำมัน
+========================= */
+
 closeFuelModal.addEventListener(
   "click",
   () => {
 
-    fuelModal.classList.remove("show");
+    fuelModal.classList.remove(
+      "show"
+    );
 
   }
 );
 
 
 document
-  .querySelector("#fuelModal .modal-backdrop")
+  .querySelector(
+    "#fuelModal .modal-backdrop"
+  )
   .addEventListener(
     "click",
     () => {
 
-      fuelModal.classList.remove("show");
+      fuelModal.classList.remove(
+        "show"
+      );
 
     }
   );
@@ -458,10 +666,16 @@ document
 function updateCostPreview() {
 
   const price =
-    Number(fuelPrice.value) || 0;
+    Number(
+      fuelPrice.value
+    ) || 0;
+
 
   const liters =
-    Number(fuelLiters.value) || 0;
+    Number(
+      fuelLiters.value
+    ) || 0;
+
 
   const total =
     price * liters;
@@ -484,6 +698,7 @@ fuelPrice.addEventListener(
   updateCostPreview
 );
 
+
 fuelLiters.addEventListener(
   "input",
   updateCostPreview
@@ -491,7 +706,7 @@ fuelLiters.addEventListener(
 
 
 /* =========================
-   บันทึกน้ำมัน
+   บันทึกการเติมน้ำมัน
 ========================= */
 
 fuelForm.addEventListener(
@@ -502,22 +717,60 @@ fuelForm.addEventListener(
 
 
     const price =
-      Number(fuelPrice.value);
+      Number(
+        fuelPrice.value
+      );
+
 
     const liters =
-      Number(fuelLiters.value);
+      Number(
+        fuelLiters.value
+      );
+
 
     const odometer =
       Number(
-        document.getElementById(
-          "odometer"
-        ).value
+        odometerInput.value
       );
+
+
+    if (price <= 0) {
+
+      alert(
+        "กรุณากรอกราคาน้ำมันให้ถูกต้อง"
+      );
+
+      return;
+
+    }
+
+
+    if (liters <= 0) {
+
+      alert(
+        "กรุณากรอกจำนวนลิตรให้ถูกต้อง"
+      );
+
+      return;
+
+    }
+
+
+    if (odometer < 0) {
+
+      alert(
+        "กรุณากรอกเลขไมล์ให้ถูกต้อง"
+      );
+
+      return;
+
+    }
 
 
     const record = {
 
-      id: Date.now(),
+      id:
+        Date.now(),
 
       vehicle:
         fuelVehicle.value,
@@ -539,16 +792,14 @@ fuelForm.addEventListener(
 
     records.push(record);
 
+
     saveRecords();
 
 
     fuelForm.reset();
 
 
-    fuelDate.value =
-      new Date()
-        .toISOString()
-        .split("T")[0];
+    setTodayDate();
 
 
     fuelVehicle.value =
@@ -559,7 +810,9 @@ fuelForm.addEventListener(
       "฿0.00";
 
 
-    fuelModal.classList.remove("show");
+    fuelModal.classList.remove(
+      "show"
+    );
 
 
     updateSummary();
@@ -582,7 +835,8 @@ function renderHistory() {
     records
       .filter(
         record =>
-          record.vehicle === vehicle
+          record.vehicle ===
+          vehicle
       )
       .sort(
         (a, b) =>
@@ -590,13 +844,16 @@ function renderHistory() {
       );
 
 
-  if (vehicleRecords.length === 0) {
+  if (
+    vehicleRecords.length === 0
+  ) {
 
     fuelHistory.innerHTML = `
       <div class="glass empty-state">
         ยังไม่มีข้อมูลการเติมน้ำมัน
       </div>
     `;
+
 
     return;
 
@@ -611,20 +868,36 @@ function renderHistory() {
           <div class="glass history-item">
 
             <div>
+
               <strong>
-                ${formatDate(record.date)}
+                ${formatDate(
+                  record.date
+                )}
               </strong>
 
               <p>
-                ${record.liters.toFixed(2)} ลิตร ·
-                ${record.odometer.toLocaleString()} km
+                ${Number(
+                  record.liters
+                ).toFixed(2)}
+                ลิตร ·
+
+                ${Number(
+                  record.odometer
+                ).toLocaleString(
+                  "th-TH"
+                )}
+                km
               </p>
+
             </div>
+
 
             <div class="history-cost">
 
               <strong>
-                ฿${record.total.toLocaleString(
+                ฿${Number(
+                  record.total
+                ).toLocaleString(
                   "th-TH",
                   {
                     minimumFractionDigits: 2,
@@ -634,7 +907,9 @@ function renderHistory() {
               </strong>
 
               <span>
-                ฿${record.price.toFixed(2)}/L
+                ฿${Number(
+                  record.price
+                ).toFixed(2)}/L
               </span>
 
             </div>
@@ -646,67 +921,150 @@ function renderHistory() {
 
 }
 
+
+/* =========================
+   Dashboard รายเดือน
+========================= */
+
 function updateSummary() {
 
-  const vehicle = vehicleSelect.value;
+  const vehicle =
+    vehicleSelect.value;
 
-  /* ข้อมูลทั้งหมดของรถคันนี้ */
+
+  /*
+    ข้อมูลทั้งหมดของรถ
+    เรียงตามวันที่และเลขไมล์
+  */
+
   const allVehicleRecords =
     records
-      .filter(record => record.vehicle === vehicle)
-      .sort((a, b) => {
+      .filter(
+        record =>
+          record.vehicle ===
+          vehicle
+      )
+      .sort(
+        (a, b) => {
 
-        const dateA = new Date(a.date);
-        const dateB = new Date(b.date);
+          const dateA =
+            new Date(
+              a.date +
+              "T00:00:00"
+            );
 
-        if (dateA - dateB !== 0) {
-          return dateA - dateB;
+
+          const dateB =
+            new Date(
+              b.date +
+              "T00:00:00"
+            );
+
+
+          if (
+            dateA - dateB !== 0
+          ) {
+
+            return (
+              dateA - dateB
+            );
+
+          }
+
+
+          if (
+            Number(
+              a.odometer
+            ) !==
+            Number(
+              b.odometer
+            )
+          ) {
+
+            return (
+              Number(
+                a.odometer
+              ) -
+              Number(
+                b.odometer
+              )
+            );
+
+          }
+
+
+          return (
+            Number(a.id) -
+            Number(b.id)
+          );
+
         }
-
-        return a.odometer - b.odometer;
-
-      });
+      );
 
 
-  /* เดือนและปีปัจจุบัน */
-  const now = new Date();
+  /* เดือนปัจจุบัน */
+
+  const now =
+    new Date();
+
 
   const currentMonth =
     now.getMonth();
+
 
   const currentYear =
     now.getFullYear();
 
 
-  /* รายการเฉพาะเดือนปัจจุบัน */
+  /*
+    เฉพาะรายการในเดือนนี้
+  */
+
   const monthlyRecords =
-    allVehicleRecords.filter(record => {
+    allVehicleRecords.filter(
+      record => {
 
-      const recordDate =
-        new Date(record.date + "T00:00:00");
+        const recordDate =
+          new Date(
+            record.date +
+            "T00:00:00"
+          );
 
-      return (
-        recordDate.getMonth() === currentMonth &&
-        recordDate.getFullYear() === currentYear
-      );
 
-    });
+        return (
+          recordDate.getMonth() ===
+            currentMonth &&
+
+          recordDate.getFullYear() ===
+            currentYear
+        );
+
+      }
+    );
 
 
   /* ค่าใช้จ่ายเดือนนี้ */
+
   const totalCost =
     monthlyRecords.reduce(
       (sum, record) =>
-        sum + Number(record.total || 0),
+        sum +
+        Number(
+          record.total || 0
+        ),
       0
     );
 
 
-  /* น้ำมันที่เติมเดือนนี้ */
+  /* น้ำมันเดือนนี้ */
+
   const totalLiters =
     monthlyRecords.reduce(
       (sum, record) =>
-        sum + Number(record.liters || 0),
+        sum +
+        Number(
+          record.liters || 0
+        ),
       0
     );
 
@@ -714,61 +1072,102 @@ function updateSummary() {
   /*
     คำนวณระยะทางและ km/L
 
-    ใช้เลขไมล์ครั้งก่อน
-    เทียบกับเลขไมล์ครั้งล่าสุด
+    ตัวอย่าง
 
-    ตัวอย่าง:
-    ครั้งก่อน 10,000 km
-    ครั้งใหม่ 10,500 km
-    เติม 40 L
+    ครั้งก่อน
+    10,000 km
 
-    = วิ่ง 500 km
+    ครั้งล่าสุด
+    10,500 km
+    เติม 40 ลิตร
+
+    ระยะทาง = 500 km
+
+    km/L =
+    500 ÷ 40
     = 12.5 km/L
   */
 
   let monthlyDistance = 0;
+
   let litersForEfficiency = 0;
 
 
-  monthlyRecords.forEach(record => {
+  allVehicleRecords.forEach(
+    (record, index) => {
 
-    const currentIndex =
-      allVehicleRecords.indexOf(record);
+      if (index === 0) {
 
-    if (currentIndex <= 0) {
-      return;
+        return;
+
+      }
+
+
+      const recordDate =
+        new Date(
+          record.date +
+          "T00:00:00"
+        );
+
+
+      const isCurrentMonth =
+        recordDate.getMonth() ===
+          currentMonth &&
+
+        recordDate.getFullYear() ===
+          currentYear;
+
+
+      if (!isCurrentMonth) {
+
+        return;
+
+      }
+
+
+      const previousRecord =
+        allVehicleRecords[
+          index - 1
+        ];
+
+
+      const distance =
+        Number(
+          record.odometer
+        ) -
+        Number(
+          previousRecord.odometer
+        );
+
+
+      if (distance > 0) {
+
+        monthlyDistance +=
+          distance;
+
+
+        litersForEfficiency +=
+          Number(
+            record.liters || 0
+          );
+
+      }
+
     }
-
-
-    const previousRecord =
-      allVehicleRecords[currentIndex - 1];
-
-
-    const distance =
-      Number(record.odometer) -
-      Number(previousRecord.odometer);
-
-
-    /* ป้องกันข้อมูลเลขไมล์ผิด */
-    if (distance > 0) {
-
-      monthlyDistance += distance;
-
-      litersForEfficiency +=
-        Number(record.liters || 0);
-
-    }
-
-  });
+  );
 
 
   const efficiency =
     litersForEfficiency > 0
-      ? monthlyDistance / litersForEfficiency
+
+      ? monthlyDistance /
+        litersForEfficiency
+
       : 0;
 
 
-  /* แสดงค่าใช้จ่าย */
+  /* ค่าใช้จ่าย */
+
   document.getElementById(
     "monthlyCost"
   ).textContent =
@@ -780,14 +1179,16 @@ function updateSummary() {
     )}`;
 
 
-  /* แสดงน้ำมัน */
+  /* น้ำมัน */
+
   document.getElementById(
     "monthlyLiters"
   ).textContent =
     `${totalLiters.toFixed(1)} L`;
 
 
-  /* แสดงระยะทาง */
+  /* ระยะทาง */
+
   document.getElementById(
     "monthlyDistance"
   ).textContent =
@@ -796,92 +1197,7 @@ function updateSummary() {
     )} km`;
 
 
-  /* แสดง km/L */
-  document.getElementById(
-    "fuelEfficiency"
-  ).textContent =
-    `${efficiency.toFixed(1)} km/L`;
-
-
-  renderHistory();
-
-}
-
-  const vehicle =
-    vehicleSelect.value;
-
-
-  const vehicleRecords =
-    records
-      .filter(
-        record =>
-          record.vehicle === vehicle
-      )
-      .sort(
-        (a, b) =>
-          a.odometer - b.odometer
-      );
-
-
-  const totalCost =
-    vehicleRecords.reduce(
-      (sum, record) =>
-        sum + record.total,
-      0
-    );
-
-
-  const totalLiters =
-    vehicleRecords.reduce(
-      (sum, record) =>
-        sum + record.liters,
-      0
-    );
-
-
-  let distance = 0;
-
-
-  if (vehicleRecords.length >= 2) {
-
-    distance =
-      vehicleRecords[
-        vehicleRecords.length - 1
-      ].odometer
-      -
-      vehicleRecords[0].odometer;
-
-  }
-
-
-  const efficiency =
-    totalLiters > 0
-      ? distance / totalLiters
-      : 0;
-
-
-  document.getElementById(
-    "monthlyCost"
-  ).textContent =
-    `฿${totalCost.toLocaleString(
-      "th-TH",
-      {
-        maximumFractionDigits: 0
-      }
-    )}`;
-
-
-  document.getElementById(
-    "monthlyLiters"
-  ).textContent =
-    `${totalLiters.toFixed(1)} L`;
-
-
-  document.getElementById(
-    "monthlyDistance"
-  ).textContent =
-    `${distance.toLocaleString()} km`;
-
+  /* km/L */
 
   document.getElementById(
     "fuelEfficiency"
@@ -890,29 +1206,36 @@ function updateSummary() {
 
 
   renderHistory();
-
-}
-
-
-function formatDate(date) {
-
-  return new Date(date)
-    .toLocaleDateString(
-      "th-TH",
-      {
-        day: "numeric",
-        month: "short",
-        year: "2-digit"
-      }
-    );
 
 }
 
 
 /* =========================
-   เริ่มแอป
+   แสดงวันที่แบบไทย
+========================= */
+
+function formatDate(date) {
+
+  return new Date(
+    date + "T00:00:00"
+  ).toLocaleDateString(
+    "th-TH",
+    {
+      day: "numeric",
+      month: "short",
+      year: "2-digit"
+    }
+  );
+
+}
+
+
+/* =========================
+   เริ่มต้นแอป
 ========================= */
 
 saveVehicles();
+
 renderVehicles();
+
 updateSummary();
