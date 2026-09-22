@@ -646,12 +646,166 @@ function renderHistory() {
 
 }
 
-
-/* =========================
-   Dashboard
-========================= */
-
 function updateSummary() {
+
+  const vehicle = vehicleSelect.value;
+
+  /* ข้อมูลทั้งหมดของรถคันนี้ */
+  const allVehicleRecords =
+    records
+      .filter(record => record.vehicle === vehicle)
+      .sort((a, b) => {
+
+        const dateA = new Date(a.date);
+        const dateB = new Date(b.date);
+
+        if (dateA - dateB !== 0) {
+          return dateA - dateB;
+        }
+
+        return a.odometer - b.odometer;
+
+      });
+
+
+  /* เดือนและปีปัจจุบัน */
+  const now = new Date();
+
+  const currentMonth =
+    now.getMonth();
+
+  const currentYear =
+    now.getFullYear();
+
+
+  /* รายการเฉพาะเดือนปัจจุบัน */
+  const monthlyRecords =
+    allVehicleRecords.filter(record => {
+
+      const recordDate =
+        new Date(record.date + "T00:00:00");
+
+      return (
+        recordDate.getMonth() === currentMonth &&
+        recordDate.getFullYear() === currentYear
+      );
+
+    });
+
+
+  /* ค่าใช้จ่ายเดือนนี้ */
+  const totalCost =
+    monthlyRecords.reduce(
+      (sum, record) =>
+        sum + Number(record.total || 0),
+      0
+    );
+
+
+  /* น้ำมันที่เติมเดือนนี้ */
+  const totalLiters =
+    monthlyRecords.reduce(
+      (sum, record) =>
+        sum + Number(record.liters || 0),
+      0
+    );
+
+
+  /*
+    คำนวณระยะทางและ km/L
+
+    ใช้เลขไมล์ครั้งก่อน
+    เทียบกับเลขไมล์ครั้งล่าสุด
+
+    ตัวอย่าง:
+    ครั้งก่อน 10,000 km
+    ครั้งใหม่ 10,500 km
+    เติม 40 L
+
+    = วิ่ง 500 km
+    = 12.5 km/L
+  */
+
+  let monthlyDistance = 0;
+  let litersForEfficiency = 0;
+
+
+  monthlyRecords.forEach(record => {
+
+    const currentIndex =
+      allVehicleRecords.indexOf(record);
+
+    if (currentIndex <= 0) {
+      return;
+    }
+
+
+    const previousRecord =
+      allVehicleRecords[currentIndex - 1];
+
+
+    const distance =
+      Number(record.odometer) -
+      Number(previousRecord.odometer);
+
+
+    /* ป้องกันข้อมูลเลขไมล์ผิด */
+    if (distance > 0) {
+
+      monthlyDistance += distance;
+
+      litersForEfficiency +=
+        Number(record.liters || 0);
+
+    }
+
+  });
+
+
+  const efficiency =
+    litersForEfficiency > 0
+      ? monthlyDistance / litersForEfficiency
+      : 0;
+
+
+  /* แสดงค่าใช้จ่าย */
+  document.getElementById(
+    "monthlyCost"
+  ).textContent =
+    `฿${totalCost.toLocaleString(
+      "th-TH",
+      {
+        maximumFractionDigits: 0
+      }
+    )}`;
+
+
+  /* แสดงน้ำมัน */
+  document.getElementById(
+    "monthlyLiters"
+  ).textContent =
+    `${totalLiters.toFixed(1)} L`;
+
+
+  /* แสดงระยะทาง */
+  document.getElementById(
+    "monthlyDistance"
+  ).textContent =
+    `${monthlyDistance.toLocaleString(
+      "th-TH"
+    )} km`;
+
+
+  /* แสดง km/L */
+  document.getElementById(
+    "fuelEfficiency"
+  ).textContent =
+    `${efficiency.toFixed(1)} km/L`;
+
+
+  renderHistory();
+
+}
 
   const vehicle =
     vehicleSelect.value;
