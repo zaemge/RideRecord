@@ -34,13 +34,16 @@
 
         <div>
           <span class="label">รถที่เลือก</span>
-          <h2 id="currentVehicle">Honda Civic</h2>
+          <h2 id="currentVehicle">Lambretta X200</h2>
         </div>
 
-        <select id="vehicleSelect">
-          <option value="Honda Civic">Honda Civic</option>
-          <option value="Toyota Yaris">Toyota Yaris</option>
-        </select>
+        <div class="vehicle-controls">
+  <select id="vehicleSelect"></select>
+
+  <button id="addVehicleButton" type="button">
+    + เพิ่มรถ
+  </button>
+</div>
 
       </section>
 
@@ -205,7 +208,7 @@
               placeholder="เช่น 34.50"
               required
             />
-            <span>บาท</span>
+            <span>THB</span>
           </div>
         </label>
 
@@ -220,7 +223,7 @@
               placeholder="เช่น 35.20"
               required
             />
-            <span>ลิตร</span>
+            <span>litre</span>
           </div>
         </label>
 
