@@ -577,5 +577,8 @@ form select {
   .app {
     padding-top: 45px;
   }
+  main {
+  padding-bottom: 120px;
+}
 
 }
