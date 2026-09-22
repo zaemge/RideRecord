@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#eef8ff" />
+
+  <title>RideRecord</title>
+
+  <link rel="stylesheet" href="/style.css" />
+</head>
+
+<body>
+
+  <div class="app">
+
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">RIDERECORD</p>
+        <h1>ภาพรวมการเดินทาง</h1>
+      </div>
+
+      <button class="profile-button">
+        RR
+      </button>
+    </header>
+
+
+    <main>
+
+      <!-- รถที่กำลังใช้งาน -->
+
+      <section class="glass vehicle-card">
+
+        <div>
+          <span class="label">รถที่เลือก</span>
+          <h2 id="currentVehicle">Honda Civic</h2>
+        </div>
+
+        <select id="vehicleSelect">
+          <option value="Honda Civic">Honda Civic</option>
+          <option value="Toyota Yaris">Toyota Yaris</option>
+        </select>
+
+      </section>
+
+
+      <!-- สรุป -->
+
+      <section class="summary-grid">
+
+        <div class="glass summary-card">
+          <span>ค่าใช้จ่ายเดือนนี้</span>
+          <strong id="monthlyCost">฿0</strong>
+        </div>
+
+        <div class="glass summary-card">
+          <span>น้ำมันทั้งหมด</span>
+          <strong id="monthlyLiters">0 L</strong>
+        </div>
+
+        <div class="glass summary-card">
+          <span>ระยะทาง</span>
+          <strong id="monthlyDistance">0 km</strong>
+        </div>
+
+        <div class="glass summary-card">
+          <span>อัตราสิ้นเปลือง</span>
+          <strong id="fuelEfficiency">0 km/L</strong>
+        </div>
+
+      </section>
+
+
+      <!-- ปุ่มหลัก -->
+
+      <section class="quick-actions">
+
+        <button class="primary-action" id="openFuelModal">
+          <span class="action-icon">＋</span>
+
+          <span>
+            <strong>บันทึกการเติมน้ำมัน</strong>
+            <small>เพิ่มข้อมูลการเติมครั้งล่าสุด</small>
+          </span>
+        </button>
+
+
+        <button class="secondary-action">
+          <span class="action-icon">↗</span>
+
+          <span>
+            <strong>เพิ่มทริป</strong>
+            <small>บันทึกการเดินทางใหม่</small>
+          </span>
+        </button>
+
+      </section>
+
+
+      <!-- ประวัติล่าสุด -->
+
+      <section class="section">
+
+        <div class="section-title">
+          <h2>รายการล่าสุด</h2>
+
+          <button>
+            ดูทั้งหมด
+          </button>
+        </div>
+
+        <div id="fuelHistory" class="history-list">
+
+          <div class="glass empty-state">
+            ยังไม่มีข้อมูลการเติมน้ำมัน
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+
+    <!-- Navigation -->
+
+    <nav class="bottom-nav">
+
+      <button class="nav-item active">
+        <span>⌂</span>
+        <small>หน้าหลัก</small>
+      </button>
+
+      <button class="nav-item">
+        <span>▤</span>
+        <small>บันทึก</small>
+      </button>
+
+      <button class="nav-item">
+        <span>⌁</span>
+        <small>ทริป</small>
+      </button>
+
+      <button class="nav-item">
+        <span>◉</span>
+        <small>รถ</small>
+      </button>
+
+    </nav>
+
+  </div>
+
+
+  <!-- Add fuel modal -->
+
+  <div class="modal" id="fuelModal">
+
+    <div class="modal-backdrop"></div>
+
+    <div class="modal-sheet glass">
+
+      <div class="modal-header">
+
+        <div>
+          <span class="label">เพิ่มรายการ</span>
+          <h2>เติมน้ำมัน</h2>
+        </div>
+
+        <button id="closeFuelModal" class="close-button">
+          ×
+        </button>
+
+      </div>
+
+
+      <form id="fuelForm">
+
+        <label>
+          รถ
+          <select id="fuelVehicle">
+            <option>Honda Civic</option>
+            <option>Toyota Yaris</option>
+          </select>
+        </label>
+
+
+        <label>
+          วันที่เติม
+          <input
+            id="fuelDate"
+            type="date"
+            required
+          />
+        </label>
+
+
+        <label>
+          ราคาน้ำมัน / ลิตร
+          <div class="input-unit">
+            <input
+              id="fuelPrice"
+              type="number"
+              step="0.01"
+              placeholder="เช่น 34.50"
+              required
+            />
+            <span>บาท</span>
+          </div>
+        </label>
+
+
+        <label>
+          ปริมาณน้ำมัน
+          <div class="input-unit">
+            <input
+              id="fuelLiters"
+              type="number"
+              step="0.01"
+              placeholder="เช่น 35.20"
+              required
+            />
+            <span>ลิตร</span>
+          </div>
+        </label>
+
+
+        <label>
+          เลขไมล์
+          <div class="input-unit">
+            <input
+              id="odometer"
+              type="number"
+              placeholder="เช่น 54210"
+              required
+            />
+            <span>km</span>
+          </div>
+        </label>
+
+
+        <div class="cost-preview">
+
+          <span>ยอดรวมโดยประมาณ</span>
+
+          <strong id="costPreview">
+            ฿0.00
+          </strong>
+
+        </div>
+
+
+        <button type="submit" class="save-button">
+          บันทึกข้อมูล
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <script src="/app.js"></script>
+
+</body>
+</html>
