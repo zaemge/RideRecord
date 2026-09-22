@@ -580,5 +580,55 @@ form select {
   main {
   padding-bottom: 120px;
 }
+.vehicle-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
 
+.vehicle-controls select {
+  flex: 1;
+}
+
+#addVehicleButton {
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  border-radius: 14px;
+
+  padding: 10px 14px;
+
+  background: rgba(255, 255, 255, 0.55);
+
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+
+  color: var(--blue-dark);
+
+  font-weight: 600;
+
+  box-shadow:
+    0 8px 20px
+    rgba(62, 142, 200, 0.12);
+
+  white-space: nowrap;
+}
+
+#addVehicleButton:active {
+  transform: scale(0.97);
+}
+
+@media (max-width: 480px) {
+  .vehicle-card {
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .vehicle-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  #addVehicleButton {
+    width: 100%;
+  }
+}
 }
