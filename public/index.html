@@ -263,6 +263,61 @@
 
   </div>
 
+<!-- Manage Vehicle Modal -->
+<div class="modal" id="vehicleModal">
+
+  <div class="modal-backdrop vehicle-backdrop"></div>
+
+  <div class="modal-sheet glass">
+
+    <div class="modal-header">
+      <div>
+        <span class="label">จัดการรถ</span>
+        <h2>รถของฉัน</h2>
+      </div>
+
+      <button
+        id="closeVehicleModal"
+        class="close-button"
+        type="button"
+      >
+        ×
+      </button>
+    </div>
+
+
+    <div class="vehicle-form">
+
+      <label>
+        ชื่อรถ
+
+        <input
+          id="vehicleNameInput"
+          type="text"
+          placeholder="เช่น Honda Civic"
+        />
+      </label>
+
+      <button
+        id="saveVehicleButton"
+        class="save-button"
+        type="button"
+      >
+        เพิ่มรถ
+      </button>
+
+    </div>
+
+
+    <div class="vehicle-list-title">
+      รถที่บันทึกไว้
+    </div>
+
+    <div id="vehicleList"></div>
+
+  </div>
+
+</div>
 
   <script src="/app.js"></script>
 
