@@ -1,678 +1,240 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <meta
-    name="theme-color"
-    content="#eef8ff"
-  >
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#edf7ff" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="RideRecord" />
   <title>RideRecord</title>
-
-  <link
-    rel="stylesheet"
-    href="/style.css"
-  >
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png" />
+  <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://unpkg.com" crossorigin>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+  <link rel="stylesheet" href="./styles.css" />
 </head>
-
-
 <body>
-
-  <div class="app">
-
-
-    <!-- =========================
-         ส่วนหัว
-    ========================== -->
-
-    <header class="topbar">
-
-      <div>
-
-        <p class="eyebrow">
-          RIDERECORD
-        </p>
-
-        <h1>
-          ภาพรวมการเดินทาง
-        </h1>
-
+  <div class="app-shell">
+    <header class="topbar glass">
+      <div class="brand-wrap">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 48 48" role="img"><circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" stroke-width="4"/><path d="M10 29c9-13 20-15 29-9M13 33c7-9 15-11 23-8M24 10l3 8-6 4-8-1" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="brand">RideRecord</div>
+          <div class="tagline">Drive smarter. Record further.</div>
+        </div>
       </div>
-
-
-      <button
-        class="profile-button"
-        type="button"
-      >
-        RR
+      <button class="icon-btn" id="installButton" aria-label="ติดตั้งแอป" title="ติดตั้งแอป">
+        <span>＋</span>
       </button>
-
     </header>
 
-
-
-    <main>
-
-
-      <!-- =========================
-           รถที่กำลังใช้งาน
-      ========================== -->
-
-      <section
-        class="glass vehicle-card"
-      >
-
-        <div>
-
-          <span class="label">
-            รถที่เลือก
-          </span>
-
-          <h2 id="currentVehicle">
-            Honda Civic
-          </h2>
-
-        </div>
-
-
-        <div class="vehicle-controls">
-
-          <select id="vehicleSelect">
-          </select>
-
-
-          <button
-            id="addVehicleButton"
-            type="button"
-          >
-            + เพิ่มรถ
-          </button>
-
-        </div>
-
-      </section>
-
-
-
-      <!-- =========================
-           สรุปรายเดือน
-      ========================== -->
-
-      <section class="summary-grid">
-
-
-        <div
-          class="glass summary-card"
-        >
-
-          <span>
-            ค่าใช้จ่ายเดือนนี้
-          </span>
-
-          <strong id="monthlyCost">
-            ฿0
-          </strong>
-
-        </div>
-
-
-
-        <div
-          class="glass summary-card"
-        >
-
-          <span>
-            น้ำมันเดือนนี้
-          </span>
-
-          <strong id="monthlyLiters">
-            0 L
-          </strong>
-
-        </div>
-
-
-
-        <div
-          class="glass summary-card"
-        >
-
-          <span>
-            ระยะทางเดือนนี้
-          </span>
-
-          <strong id="monthlyDistance">
-            0 km
-          </strong>
-
-        </div>
-
-
-
-        <div
-          class="glass summary-card"
-        >
-
-          <span>
-            อัตราสิ้นเปลือง
-          </span>
-
-          <strong id="fuelEfficiency">
-            0 km/L
-          </strong>
-
-        </div>
-
-
-      </section>
-
-
-
-      <!-- =========================
-           เมนูด่วน
-      ========================== -->
-
-      <section class="quick-actions">
-
-
-        <button
-          class="primary-action"
-          id="openFuelModal"
-          type="button"
-        >
-
-          <span class="action-icon">
-            ＋
-          </span>
-
-
-          <span>
-
-            <strong>
-              บันทึกการเติมน้ำมัน
-            </strong>
-
-            <small>
-              เพิ่มข้อมูลการเติมครั้งล่าสุด
-            </small>
-
-          </span>
-
-        </button>
-
-
-
-        <button
-          class="secondary-action"
-          id="openTripButton"
-          type="button"
-        >
-
-          <span class="action-icon">
-            ↗
-          </span>
-
-
-          <span>
-
-            <strong>
-              เพิ่มทริป
-            </strong>
-
-            <small>
-              บันทึกการเดินทางใหม่
-            </small>
-
-          </span>
-
-        </button>
-
-
-      </section>
-
-
-
-      <!-- =========================
-           ประวัติล่าสุด
-      ========================== -->
-
-      <section class="section">
-
-
-        <div class="section-title">
-
-          <h2>
-            รายการล่าสุด
-          </h2>
-
-
-          <button
-            id="viewAllHistory"
-            type="button"
-          >
-            ดูทั้งหมด
-          </button>
-
-        </div>
-
-
-        <div
-          id="fuelHistory"
-          class="history-list"
-        >
-
-          <div
-            class="glass empty-state"
-          >
-            ยังไม่มีข้อมูลการเติมน้ำมัน
+    <main id="app" class="page-stack" aria-live="polite">
+      <section class="page active" data-page="home" id="page-home">
+        <div class="hero glass">
+          <div class="hero-copy">
+            <p class="eyebrow">ภาพรวมการขับขี่</p>
+            <h1>สวัสดี 👋</h1>
+            <p class="muted" id="todayText"></p>
           </div>
-
+          <div class="hero-orb"></div>
         </div>
 
+        <section class="glass car-card">
+          <div class="section-label">รถที่กำลังใช้งาน</div>
+          <select id="homeCarSelect" class="select-control"></select>
+          <div class="car-art" aria-hidden="true">🚙</div>
+        </section>
 
+        <div class="metric-grid" id="homeMetrics"></div>
+
+        <section class="glass section-card">
+          <div class="section-head">
+            <div>
+              <p class="eyebrow">เดือนนี้</p>
+              <h2>สรุปแบบรวดเร็ว</h2>
+            </div>
+            <button class="text-btn" data-go="summary">ดูทั้งหมด</button>
+          </div>
+          <div class="mini-grid" id="homeMonthly"></div>
+        </section>
+
+        <section class="glass story-card">
+          <div>
+            <p class="eyebrow">Every ride tells a story</p>
+            <h2>บันทึกทุกการเติม<br/>วางแผนทุกทริป</h2>
+            <p class="muted">ข้อมูลอยู่ในเครื่องของคุณ ไม่ต้องสมัครสมาชิก</p>
+          </div>
+          <button class="primary compact" data-go="fuel">เพิ่มการเติมน้ำมัน</button>
+        </section>
       </section>
 
+      <section class="page" data-page="fuel" id="page-fuel">
+        <div class="page-title">
+          <div>
+            <p class="eyebrow">Fuel Entry</p>
+            <h1>บันทึกการเติมน้ำมัน</h1>
+            <p class="muted">กรอก 4 ค่า แล้วให้ RideRecord คำนวณให้</p>
+          </div>
+        </div>
 
+        <form id="fuelForm" class="glass section-card form-card">
+          <label>รถ
+            <select id="fuelCar" required></select>
+          </label>
+          <div class="form-grid">
+            <label>ราคาน้ำมัน (บาท/ลิตร)
+              <div class="input-wrap"><span>฿</span><input id="fuelPrice" type="number" step="0.01" min="0" inputmode="decimal" required placeholder="36.50"></div>
+            </label>
+            <label>น้ำมันที่เติม (ลิตร)
+              <div class="input-wrap"><span>💧</span><input id="fuelLiters" type="number" step="0.01" min="0.01" inputmode="decimal" required placeholder="37.20"></div>
+            </label>
+            <label>เลขไมล์ (กม.)
+              <div class="input-wrap"><span>◉</span><input id="fuelOdometer" type="number" step="1" min="0" inputmode="numeric" required placeholder="24,862"></div>
+            </label>
+            <label>วันที่เติม
+              <div class="input-wrap"><span>▣</span><input id="fuelDate" type="date" required></div>
+            </label>
+          </div>
+          <button type="submit" class="primary">คำนวณและบันทึก</button>
+          <p class="helper">การหา km/l ใช้ระยะทางจากเลขไมล์ครั้งก่อน ÷ จำนวนลิตรครั้งนี้</p>
+        </form>
+
+        <section class="glass section-card result-card" id="fuelResultCard">
+          <div class="section-head">
+            <div><p class="eyebrow">Calculation Results</p><h2>ผลการคำนวณล่าสุด</h2></div>
+            <span class="pill success" id="saveStatus">พร้อมใช้งาน</span>
+          </div>
+          <div class="metric-grid" id="fuelResults"></div>
+          <div class="insight" id="fuelInsight">เพิ่มรายการเติมน้ำมันเพื่อเริ่มติดตามประสิทธิภาพรถของคุณ</div>
+        </section>
+
+        <section class="glass section-card">
+          <div class="section-head"><div><p class="eyebrow">History</p><h2>รายการล่าสุด</h2></div></div>
+          <div class="list" id="fuelHistory"></div>
+        </section>
+      </section>
+
+      <section class="page" data-page="trip" id="page-trip">
+        <div class="page-title">
+          <div><p class="eyebrow">Trip Planner</p><h1>วางแผนทริป</h1><p class="muted">GPS + เส้นทาง + ประมาณน้ำมัน + จุดเติมน้ำมัน</p></div>
+        </div>
+
+        <section class="glass section-card route-controls">
+          <div class="route-row">
+            <span class="route-dot start"></span>
+            <div class="grow"><small>จุดเริ่มต้น</small><strong id="originLabel">กรุงเทพฯ</strong></div>
+            <button type="button" id="useGps" class="icon-btn secondary" title="ใช้ GPS">◎</button>
+          </div>
+          <div class="route-line"></div>
+          <div class="route-row">
+            <span class="route-dot end"></span>
+            <div class="grow"><small>ปลายทาง</small><strong id="destinationLabel">พัทยา</strong></div>
+          </div>
+          <div class="search-row">
+            <input id="placeSearch" type="search" placeholder="ค้นหาปลายทาง เช่น อยุธยา" aria-label="ค้นหาปลายทาง" />
+            <button id="searchPlace" class="secondary" type="button">ค้นหา</button>
+          </div>
+          <div id="searchResults" class="search-results"></div>
+          <p class="helper">หรือแตะบนแผนที่เพื่อเลือกปลายทางโดยตรง</p>
+        </section>
+
+        <section class="map-shell glass">
+          <div id="map" role="application" aria-label="แผนที่วางแผนทริป"></div>
+          <div class="map-badge" id="routeBadge">118 km · 1 ชม. 45 นาที</div>
+        </section>
+
+        <section class="glass section-card">
+          <div class="section-head">
+            <div><p class="eyebrow">Fuel stations</p><h2>ปั๊มน้ำมันใกล้เส้นทาง</h2></div>
+            <button type="button" id="refreshStations" class="text-btn">ค้นหาใหม่</button>
+          </div>
+          <div id="stationList" class="list"><div class="empty">วางเส้นทางเพื่อค้นหาปั๊มน้ำมัน</div></div>
+          <p class="helper">ใช้ข้อมูล OpenStreetMap และค้นหาเมื่อจำเป็น เพื่อลดการใช้งานเซิร์ฟเวอร์สาธารณะ</p>
+        </section>
+
+        <section class="glass section-card">
+          <div class="section-head"><div><p class="eyebrow">Low Fuel Alert</p><h2>เตือนก่อนน้ำมันหมด</h2></div><strong id="alertValue">50 km</strong></div>
+          <input id="alertRange" class="range" type="range" min="10" max="150" step="10" value="50" />
+          <div class="range-labels"><span>10</span><span>50</span><span>100</span><span>150 km</span></div>
+        </section>
+
+        <section class="glass section-card">
+          <div class="section-head"><div><p class="eyebrow">Trip Estimate</p><h2>ประมาณการทริป</h2></div></div>
+          <div class="mini-grid" id="tripEstimate"></div>
+          <button type="button" id="saveTrip" class="primary">บันทึกทริปนี้</button>
+        </section>
+      </section>
+
+      <section class="page" data-page="summary" id="page-summary">
+        <div class="page-title summary-head">
+          <div><p class="eyebrow">Analytics</p><h1>สรุปรายเดือน</h1><p class="muted">ดูค่าใช้จ่าย ระยะทาง และอัตราสิ้นเปลือง</p></div>
+          <input id="summaryMonth" type="month" class="month-control" />
+        </div>
+        <div class="metric-grid" id="summaryMetrics"></div>
+
+        <section class="glass section-card">
+          <div class="section-head"><div><p class="eyebrow">6 months</p><h2>ค่าใช้จ่ายน้ำมัน</h2></div></div>
+          <div class="chart" id="spendingChart" aria-label="กราฟค่าใช้จ่ายน้ำมัน 6 เดือน"></div>
+        </section>
+
+        <section class="glass section-card">
+          <div class="section-head"><div><p class="eyebrow">Recent Trips</p><h2>ทริปล่าสุด</h2></div></div>
+          <div class="list" id="tripHistory"></div>
+        </section>
+      </section>
+
+      <section class="page" data-page="more" id="page-more">
+        <div class="page-title"><div><p class="eyebrow">Settings</p><h1>รถและข้อมูล</h1><p class="muted">ตั้งค่ารถ สำรองข้อมูล และติดตั้งแอป</p></div></div>
+
+        <section class="glass section-card">
+          <div class="section-head"><div><p class="eyebrow">My Cars</p><h2>จัดการรถ</h2></div></div>
+          <div id="vehicleList" class="list"></div>
+          <form id="vehicleForm" class="inline-form">
+            <input id="vehicleName" required placeholder="ชื่อรถ เช่น Toyota Corolla" />
+            <input id="vehiclePlate" placeholder="ทะเบียน (ไม่บังคับ)" />
+            <input id="vehicleTank" type="number" step="1" min="1" required placeholder="ความจุถัง (ลิตร)" />
+            <button class="primary" type="submit">เพิ่มรถ</button>
+          </form>
+        </section>
+
+        <section class="glass section-card">
+          <div class="section-head"><div><p class="eyebrow">Backup</p><h2>สำรองข้อมูลฟรี</h2></div></div>
+          <p class="muted">ข้อมูลหลักเก็บในเครื่องนี้ คุณสามารถ Export เป็นไฟล์ JSON แล้วเก็บไว้ใน Files / iCloud Drive ได้</p>
+          <div class="button-row">
+            <button id="exportData" class="secondary" type="button">Export ข้อมูล</button>
+            <label class="secondary file-label">Import ข้อมูล<input id="importData" type="file" accept="application/json" hidden /></label>
+          </div>
+        </section>
+
+        <section class="glass section-card">
+          <div class="section-head"><div><p class="eyebrow">Install</p><h2>เพิ่มไปยังหน้าจอโฮม</h2></div></div>
+          <p class="muted" id="installHelp">บน iPhone: เปิดด้วย Safari → Share → Add to Home Screen</p>
+          <button id="installFromSettings" class="primary" type="button">ติดตั้ง RideRecord</button>
+        </section>
+
+        <section class="glass section-card danger-zone">
+          <div><p class="eyebrow">Reset</p><h2>เริ่มข้อมูลใหม่</h2><p class="muted">ลบข้อมูลรถ เติมน้ำมัน และทริปทั้งหมดจากเครื่องนี้</p></div>
+          <button id="resetData" class="danger" type="button">ล้างข้อมูลทั้งหมด</button>
+        </section>
+      </section>
     </main>
 
-
-
-    <!-- =========================
-         เมนูด้านล่าง
-    ========================== -->
-
-    <nav class="bottom-nav">
-
-
-      <button
-        class="nav-item active"
-        type="button"
-      >
-
-        <span>
-          ⌂
-        </span>
-
-        <small>
-          หน้าหลัก
-        </small>
-
-      </button>
-
-
-
-      <button
-        class="nav-item"
-        type="button"
-      >
-
-        <span>
-          ▤
-        </span>
-
-        <small>
-          บันทึก
-        </small>
-
-      </button>
-
-
-
-      <button
-        class="nav-item"
-        type="button"
-      >
-
-        <span>
-          ⌁
-        </span>
-
-        <small>
-          ทริป
-        </small>
-
-      </button>
-
-
-
-      <button
-        class="nav-item"
-        type="button"
-      >
-
-        <span>
-          ◉
-        </span>
-
-        <small>
-          รถ
-        </small>
-
-      </button>
-
-
+    <nav class="bottom-nav glass" aria-label="เมนูหลัก">
+      <button class="nav-item active" data-target="home"><span>⌂</span><small>Home</small></button>
+      <button class="nav-item" data-target="fuel"><span>⛽</span><small>Fuel</small></button>
+      <button class="nav-item" data-target="trip"><span>➤</span><small>Trip</small></button>
+      <button class="nav-item" data-target="summary"><span>▥</span><small>Summary</small></button>
+      <button class="nav-item" data-target="more"><span>•••</span><small>More</small></button>
     </nav>
-
-
   </div>
 
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
-
-  <!-- =========================
-       หน้าต่างเติมน้ำมัน
-  ========================== -->
-
-  <div
-    class="modal"
-    id="fuelModal"
-  >
-
-
-    <div class="modal-backdrop">
-    </div>
-
-
-    <div class="modal-sheet glass">
-
-
-      <div class="modal-header">
-
-
-        <div>
-
-          <span class="label">
-            เพิ่มรายการ
-          </span>
-
-          <h2>
-            เติมน้ำมัน
-          </h2>
-
-        </div>
-
-
-        <button
-          id="closeFuelModal"
-          class="close-button"
-          type="button"
-        >
-          ×
-        </button>
-
-
-      </div>
-
-
-
-      <form id="fuelForm">
-
-
-        <!-- รถ -->
-
-        <label>
-
-          รถ
-
-          <select
-            id="fuelVehicle"
-            required
-          >
-          </select>
-
-        </label>
-
-
-
-        <!-- วันที่ -->
-
-        <label>
-
-          วันที่เติม
-
-          <input
-            id="fuelDate"
-            type="date"
-            required
-          >
-
-        </label>
-
-
-
-        <!-- ราคาน้ำมัน -->
-
-        <label>
-
-          ราคาน้ำมัน / ลิตร
-
-          <div class="input-unit">
-
-            <input
-              id="fuelPrice"
-              type="number"
-              step="0.01"
-              min="0"
-              inputmode="decimal"
-              placeholder="เช่น 34.50"
-              required
-            >
-
-            <span>
-              บาท
-            </span>
-
-          </div>
-
-        </label>
-
-
-
-        <!-- จำนวนลิตร -->
-
-        <label>
-
-          ปริมาณน้ำมัน
-
-          <div class="input-unit">
-
-            <input
-              id="fuelLiters"
-              type="number"
-              step="0.01"
-              min="0"
-              inputmode="decimal"
-              placeholder="เช่น 35.20"
-              required
-            >
-
-            <span>
-              ลิตร
-            </span>
-
-          </div>
-
-        </label>
-
-
-
-        <!-- เลขไมล์ -->
-
-        <label>
-
-          เลขไมล์
-
-          <div class="input-unit">
-
-            <input
-              id="odometer"
-              type="number"
-              step="1"
-              min="0"
-              inputmode="numeric"
-              placeholder="เช่น 54210"
-              required
-            >
-
-            <span>
-              km
-            </span>
-
-          </div>
-
-        </label>
-
-
-
-        <!-- ยอดรวม -->
-
-        <div class="cost-preview">
-
-          <span>
-            ยอดรวมโดยประมาณ
-          </span>
-
-
-          <strong id="costPreview">
-            ฿0.00
-          </strong>
-
-        </div>
-
-
-
-        <!-- ปุ่มบันทึก -->
-
-        <button
-          type="submit"
-          class="save-button"
-        >
-          บันทึกข้อมูล
-        </button>
-
-
-      </form>
-
-
-    </div>
-
-
-  </div>
-
-
-
-  <!-- =========================
-       หน้าต่างจัดการรถ
-  ========================== -->
-
-  <div
-    class="modal"
-    id="vehicleModal"
-  >
-
-
-    <div
-      class="modal-backdrop vehicle-backdrop"
-    >
-    </div>
-
-
-    <div class="modal-sheet glass">
-
-
-      <div class="modal-header">
-
-
-        <div>
-
-          <span class="label">
-            จัดการรถ
-          </span>
-
-          <h2>
-            รถของฉัน
-          </h2>
-
-        </div>
-
-
-        <button
-          id="closeVehicleModal"
-          class="close-button"
-          type="button"
-        >
-          ×
-        </button>
-
-
-      </div>
-
-
-
-      <!-- เพิ่ม / แก้ไขรถ -->
-
-      <div class="vehicle-form">
-
-
-        <label>
-
-          ชื่อรถ
-
-          <input
-            id="vehicleNameInput"
-            type="text"
-            placeholder="เช่น Honda Civic"
-            autocomplete="off"
-          >
-
-        </label>
-
-
-
-        <button
-          id="saveVehicleButton"
-          class="save-button"
-          type="button"
-        >
-          เพิ่มรถ
-        </button>
-
-
-      </div>
-
-
-
-      <!-- รายการรถ -->
-
-      <div class="vehicle-list-title">
-
-        รถที่บันทึกไว้
-
-      </div>
-
-
-      <div id="vehicleList">
-      </div>
-
-
-    </div>
-
-
-  </div>
-
-
-
-  <!-- =========================
-       JavaScript
-  ========================== -->
-
-  <script src="/app.js"></script>
-
-
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+  <script src="./app.js" defer></script>
 </body>
 </html>
